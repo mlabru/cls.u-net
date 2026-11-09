@@ -1,0 +1,10 @@
+# 25.u-net/04.dvl -- dependências Python (o mesmo ~/.venv do 27.nowcast/25.oflow).
+# No host com GPU, instale o torch da build CUDA adequada (https://pytorch.org);
+# sem GPU, a build CPU basta: tudo roda com --device cpu/auto.
+torch>=2.6
+numpy>=2.0
+scipy>=1.11
+matplotlib>=3.8
+cartopy>=0.23
+pillow>=10
+pytest>=8

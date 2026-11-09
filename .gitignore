@@ -1,0 +1,47 @@
+.bkp/
+.claude/
+.doc/
+.gpt/
+logs/
+.new/
+.old/
+__pycache__/
+.pytest_cache/
+tst_env/
+.venv/
+
+.env
+
+*~
+*.bak
+*.err
+*.log
+*.mvol
+*.npy
+
+# bancos SQLite (o catalog.db compartilhado mora em 27.nowcast/04.dvl/data/dbase)
+*.db
+*.db-shm
+*.db-wal
+
+# intermediários por execução (VOL_TEMP; ex: PNGs do volViewer em data/temp/viewer)
+data/temp/
+
+# dados de execução do pipeline (saídas, estado, trava, sequência do ffmpeg):
+# não são código.
+data/cache/
+data/cappi/
+data/dbase/
+data/output/
+data/state/
+
+# ambiente local do cron (ver unt_env.sh.example)
+unt_env.sh
+
+# modelos treinados, manifestos de janelas e avaliações (gerados; grandes)
+*.pt
+*.pth
+*.npz
+data/avaliacao/
+data/janelas/
+data/modelos/
