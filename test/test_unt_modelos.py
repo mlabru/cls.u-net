@@ -10,6 +10,7 @@ testes da parte de Deep Learning, todos em CPU com redes minúsculas
 (unt_dataset), perdas mascaradas e treino (unt_treino), previsão nos três
 modos (unt_inferencia) e o contrato gera_nowcast dos backends.
 
+2026.nov  mlabru  regressao do smaat (linear/log)
 2026.out  mlabru  verificação de rede colapsada (confere_colapso, passos_colapso)
 2026.out  mlabru  perda ponderada por intensidade (peso_dbz), media_metrica
 2026.out  mlabru  dtype_amp (bfloat16/float16), treino interrompido por lotes não
@@ -389,6 +390,33 @@ def test_hparams_peso_dbz_e_media_metrica():
             um.hiperparametros(uc.carrega(), "rainnet", 4, 6, ldct_ruim)
 
 # -------------------------------------------------------------------------------------
+def test_regressao_do_smaat():
+    # padrão: linear, a do artigo (R / escala com MSE); rainnet sempre log
+    ldct = um.hiperparametros(uc.carrega(), "smaat", 4, 6)
+    assert um.CS_REGRESSAO_LINEAR == um.regressao(ldct)
+    assert isinstance(um.transformacao_padrao(ldct), ud.TransformacaoSmaat)
+    assert um.CS_REGRESSAO_LOG == um.regressao(um.hiperparametros(uc.carrega(), "rainnet", 4, 6))
+    # checkpoint antigo sem a chave: linear
+    assert um.CS_REGRESSAO_LINEAR == um.regressao({"backend": "smaat"})
+
+    pathlib.Path("config.ini").write_text("[smaat]\nregressao = log\n")
+    ldct_log = um.hiperparametros(uc.carrega(), "smaat", 4, 6)
+    assert um.CS_REGRESSAO_LOG == um.regressao(ldct_log)
+    assert isinstance(um.transformacao_padrao(ldct_log), ud.TransformacaoRainNet)
+    assert ut.identidade_retomada(ldct, "x") != ut.identidade_retomada(ldct_log, "x")
+
+    # perda do espaço log: log-cosh (|erro| 1 -> log(cosh(1)), não 1)
+    lrede = _RedeSoma()
+    lx = torch.zeros(1, 4, 2, 2)
+    ly = torch.zeros(1, 1, 2, 2)
+    ldct_lote = {"x": lx, "y": ly, "m": torch.ones_like(ly)}
+    lf_log = float(ut.calcula_perda(lrede, ldct_lote, ldct_log, None))
+    assert lf_log == pytest.approx(np.log(np.cosh(1.0)), abs=1.0e-5)
+
+    with pytest.raises(ValueError, match="regressao"):
+        um.hiperparametros(uc.carrega(), "smaat", 4, 6, {"regressao": "raiz"})
+
+# -------------------------------------------------------------------------------------
 def test_metrica_media():
     llst_hist = [{"metrica_validacao": 0.4}, {"metrica_validacao": None},
                  {"metrica_validacao": 0.1}, {"metrica_validacao": 0.9}]
@@ -464,21 +492,21 @@ def test_perda_rollout_realimenta_a_saida_e_media_dos_passos():
     ldct_lote = {"x": lx, "y": ly, "m": torch.ones_like(ly)}
 
     # saídas 1, 2, 4 (cada uma realimentada): perda zero nos 3 passos
-    lperda = ut.perda_rollout(lrede, ldct_lote, "smaat", ut.perda_mse)
+    lperda = ut.perda_rollout(lrede, ldct_lote, um.CS_REGRESSAO_LINEAR, ut.perda_mse)
     assert 0.0 == float(lperda)
     assert 3 == len(lrede.vistas)
     assert torch.equal(lrede.vistas[2][0, 2:], torch.stack([torch.full((2, 2), 1.0),
                                                            torch.full((2, 2), 2.0)]))
 
-    # smaat realimenta sem chuva negativa
-    assert 0.0 == float(ut.realimenta(torch.tensor([-1.0]), "smaat"))
-    assert -1.0 == float(ut.realimenta(torch.tensor([-1.0]), "rainnet"))
+    # linear (smaat) realimenta sem chuva negativa
+    assert 0.0 == float(ut.realimenta(torch.tensor([-1.0]), um.CS_REGRESSAO_LINEAR))
+    assert -1.0 == float(ut.realimenta(torch.tensor([-1.0]), um.CS_REGRESSAO_LOG))
 
     # rainnet realimenta dentro da faixa física, igual no treino e na inferência
     lf_min, lf_max = ud.faixa_realimentacao_rainnet()
     assert lf_min == pytest.approx(np.log(0.01))
     assert 6.0 < lf_max < 7.5
-    ltensor = ut.realimenta(torch.tensor([-204.0, 0.5, 1.0e4]), "rainnet")
+    ltensor = ut.realimenta(torch.tensor([-204.0, 0.5, 1.0e4]), um.CS_REGRESSAO_LOG)
     assert [lf_min, 0.5, lf_max] == pytest.approx(ltensor.tolist(), abs=1.0e-5)
     lnp = ud.TransformacaoRainNet().realimenta(np.array([-204.0, 0.5, 1.0e4]))
     assert [lf_min, 0.5, lf_max] == pytest.approx(lnp.tolist(), abs=1.0e-5)
