@@ -30,7 +30,7 @@ a persistência (último input repetido) é avaliada com as mesmas métricas,
 como referência: um nowcast que não supera a persistência não agrega nada.
 
 ATENÇÃO: as chaves do JSON gravado ("lead", "backends", "persistencia",
-"limiares", "csi", ...) são lidas por cls.tst/tst_report.sh.
+"limiares", "csi", ...) são lidas por cls.test/tst_report.sh.
 Não renomear. As chaves "fss", "fss_somas" e "freq_bias" são acréscimos do 25.u-net.
 
 2026.out  mlabru  calcula_somas_fss(): termos do FSS somados nos pixels ("fss_somas"),

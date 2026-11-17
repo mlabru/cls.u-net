@@ -15,7 +15,7 @@
 # inacessível/inválido ou falha ao consultá-lo.
 #
 # ATENÇÃO: espelho do ofl_run.sh, que o ambiente de teste (21.mvol/04.dvl/
-# cls.tst/tst_cycle.sh) chama por nome e sem argumentos. Não renomear.
+# cls.test/tst_cycle.sh) chama por nome e sem argumentos. Não renomear.
 #
 # 2026.out  mlabru  "main; exit" na mesma linha (edição do script durante a varredura).
 # 2026.out  mlabru  monitor de skill (executa_monitor) ao fim da varredura.

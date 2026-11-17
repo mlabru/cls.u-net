@@ -56,7 +56,7 @@ def _source(fdct_env: dict) -> tuple:
 # -------------------------------------------------------------------------------------
 def _tst_env(fpth_root: pathlib.Path) -> dict:
     """
-    variáveis que o env.sh do cls.tst exporta para o 25.oflow.
+    variáveis que o env.sh do cls.test exporta para o 25.oflow.
     """
     return {"CLS_ENV": "test",
             "CLS_TST_ROOT": str(fpth_root),
