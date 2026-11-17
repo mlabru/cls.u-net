@@ -12,8 +12,8 @@
 #
 # ATENÇÃO: os nomes UNT_PATH, UNT_CATALOG_DB, UNT_CAPPI_DIR,
 # UNT_AGE_MAX_SECS, UNT_TIMEOUT_SECS e UNT_VERIFY espelham os OFL_* do
-# 25.oflow, que o ambiente de teste (21.mvol/04.dvl/tst_env/tst_setup.sh)
-# exporta; o tst_env ainda não tem o passo do 25.u-net. Não renomear.
+# 25.oflow, que o ambiente de teste (cls.tst/tst_setup.sh)
+# exporta; o cls.tst ainda não tem o passo do 25.u-net. Não renomear.
 #
 # 2026.nov  mlabru  cls_setup_pythonpath: pacote Python comum (cls_common)
 #                   por CLS_PYLIB, no lugar dos symlinks apps/{dbase,radar,util}
@@ -60,7 +60,7 @@
 #                   - UNT_PATH/idade máxima sobreponíveis por env var,
 #                     UNT_LIB_DIR (código) separado de UNT_PATH (dados),
 #                     UNT_TIMEOUT_SECS, UNT_VERIFY e trava do ambiente de
-#                     teste (CLS_ENV=test, 21.mvol/tst_env). UNT_MAPA_CACHE
+#                     teste (CLS_ENV=test, cls.tst). UNT_MAPA_CACHE
 #                     (cache das feições do mapa) dentro da árvore de dados.
 #
 # 2026.ago  mlabru  initial version (Bash/Linux)
