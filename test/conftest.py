@@ -16,6 +16,7 @@ CAPPIs 64x64 para os testes de janelas/treino/inferência)
 # força um backend não-interativo antes que qualquer módulo sob teste importe
 # matplotlib.pyplot, evitando falha em ambiente sem display (headless/CI)
 
+import os
 import matplotlib
 matplotlib.use("Agg")
 
@@ -117,5 +118,11 @@ def cria_catalogo_sintetico(fpth_raiz, fi_num_volumes: int=40, fs_radar: str="ST
 @pytest.fixture
 def catalogo_sintetico(tmp_path):
     return cria_catalogo_sintetico(tmp_path / "sintetico")
+
+# < ambiente cls >---------------------------------------------------------------------
+
+# a suíte não depende do cls.env de quem a roda (~/.config/cls/cls.env): os
+# scripts shell testados herdam este ambiente e não carregam nada de lá
+os.environ["CLS_ENV_FILE"] = os.devnull
 
 # < the end >--------------------------------------------------------------------------

@@ -5,7 +5,7 @@ Copyright (c) 1995-2026, Instituto de Controle do Espaço Aéreo
 
 test_unt_cfg
 testes de unt_cfg.sh: defaults de produção, sobreposição por env var e trava
-do ambiente de teste (MET_ENV=test exige tudo dentro de MET_TST_ROOT),
+do ambiente de teste (CLS_ENV=test exige tudo dentro de CLS_TST_ROOT),
 mesmo padrão de 21.mrad/test/test_rsm_cfg.py
 
 2026.out  mlabru  portado de 25.oflow.
@@ -58,8 +58,8 @@ def _tst_env(fpth_root: pathlib.Path) -> dict:
     """
     variáveis que o env.sh do 21.mvol/tst_env exporta para o 25.oflow.
     """
-    return {"MET_ENV": "test",
-            "MET_TST_ROOT": str(fpth_root),
+    return {"CLS_ENV": "test",
+            "CLS_TST_ROOT": str(fpth_root),
             "UNT_PATH": str(fpth_root / "oflow"),
             "UNT_CATALOG_DB": str(fpth_root / "mvol/data/dbase/catalog.db"),
             "UNT_CAPPI_DIR": str(fpth_root / "nowcast/data/cappi"),
@@ -100,7 +100,7 @@ def test_overrides_por_env_var(tmp_path):
     assert "300" == ldct["UNT_TIMEOUT_SECS"]
     assert "500" == ldct["UNT_DB_TIMEOUT_MS"]
 
-# < trava MET_ENV=test >-----------------------------------------------------------------
+# < trava CLS_ENV=test >-----------------------------------------------------------------
 
 def test_trava_aceita_env_do_tst(tmp_path):
     li_rc, ldct, ls_err = _source(_tst_env(tmp_path))
@@ -130,18 +130,18 @@ def test_trava_recusa_escape_por_dot_dot(tmp_path):
 # -------------------------------------------------------------------------------------
 def test_trava_exige_met_tst_root(tmp_path):
     ldct_env = _tst_env(tmp_path)
-    del ldct_env["MET_TST_ROOT"]
+    del ldct_env["CLS_TST_ROOT"]
 
     li_rc, _, ls_err = _source(ldct_env)
 
     assert 1 == li_rc
-    assert "MET_TST_ROOT" in ls_err
+    assert "CLS_TST_ROOT" in ls_err
 
 # -------------------------------------------------------------------------------------
 def test_trava_bloqueia_defaults_de_producao(tmp_path):
-    # MET_ENV=test sem nenhum UNT_*: os defaults (~/Public/unet) estão
+    # CLS_ENV=test sem nenhum UNT_*: os defaults (~/Public/unet) estão
     # fora da raiz e precisam ser recusados
-    li_rc, _, _ = _source({"MET_ENV": "test", "MET_TST_ROOT": str(tmp_path)})
+    li_rc, _, _ = _source({"CLS_ENV": "test", "CLS_TST_ROOT": str(tmp_path)})
 
     assert 1 == li_rc
 

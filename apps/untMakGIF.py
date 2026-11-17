@@ -63,7 +63,7 @@ import typing
 # PIL
 from PIL import Image, ImageDraw, ImageFont
 
-# utils (módulo compartilhado com outros projetos met: apps/util é symlink)
+# utils (módulo compartilhado com outros projetos cls: apps/util é symlink)
 import util.utl_gifs as utg
 
 # < constants >--------------------------------------------------------------------------

@@ -15,6 +15,12 @@
 # 25.oflow, que o ambiente de teste (21.mvol/04.dvl/tst_env/tst_setup.sh)
 # exporta; o tst_env ainda não tem o passo do 25.u-net. Não renomear.
 #
+# 2026.nov  mlabru  - cls.env (CLS_ENV_FILE, padrão ~/.config/cls/cls.env)
+#                     carregado antes dos padrões; cls_common.sh vem de
+#                     CLS_LIB, com o symlink ao lado do script como reserva
+#                   - prefixo met -> cls (cls_log, cls_check_test_env,
+#                     CLS_ENV, CLS_TST_ROOT)
+#
 # 2026.out  mlabru  seção de treino (unt_treino.sh, host de GPU): UNT_CONFIG,
 #                   UNT_JANELAS_DIR, UNT_AVALIACAO_DIR, UNT_TREINO_*,
 #                   UNT_DESTINO_MODELOS (rsync), logs e lock próprios;
@@ -38,24 +44,31 @@
 #                   - removidos os restos do daemon (unt_daemon.sh):
 #                     UNT_PROC_QUEUE, GS_SHUTDOWN_FILE, GI_WATCH_INTERVAL_SECS
 #
-#                   - trava via met_check_test_env (met_common.sh, symlink
-#                     para 04.dvl/bash), comum aos projetos met
+#                   - trava via cls_check_test_env (met_common.sh, symlink
+#                     para 04.dvl/bash), comum aos projetos cls
 #
 #                   - UNT_PATH/idade máxima sobreponíveis por env var,
 #                     UNT_LIB_DIR (código) separado de UNT_PATH (dados),
 #                     UNT_TIMEOUT_SECS, UNT_VERIFY e trava do ambiente de
-#                     teste (MET_ENV=test, 21.mvol/tst_env). UNT_MAPA_CACHE
+#                     teste (CLS_ENV=test, 21.mvol/tst_env). UNT_MAPA_CACHE
 #                     (cache das feições do mapa) dentro da árvore de dados.
 #
 # 2026.ago  mlabru  initial version (Bash/Linux)
 
-# depends on: bash, met_common.sh
+# depends on: bash, cls_common.sh
 # shellcheck shell=bash
 
 # < código >---------------------------------------------------------------------------
 
 # diretório do código (este repositório): os apps/*.py rodam sempre daqui
 UNT_LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# ambiente da instalação (cls.env: CLS_LIB e sobreposições), carregado
+# antes dos padrões abaixo; "set -a" exporta para os programas Python.
+# Precedência: ambiente do processo > cls.env > padrões deste arquivo (ver
+# cls.common/etc/cls.env.example)
+CLS_ENV_FILE="${CLS_ENV_FILE:-${HOME:-}/.config/cls/cls.env}"
+if [ -r "${CLS_ENV_FILE}" ]; then set -a; source "${CLS_ENV_FILE}"; set +a; fi
 
 # nome desta máquina (só para o log)
 UNT_HOST=$(hostname)
@@ -83,7 +96,7 @@ UNT_LOG_APP="${UNT_LOGS}/unt_main.log"
 UNT_LOG_ERR="${UNT_LOGS}/unt_main.err"
 
 # limite de tamanho de cada log (10 MB) antes de rotacionar. O nome
-# GI_LOG_MAX_SIZE é lido pelo check_log_size do met_common.sh: não renomear.
+# GI_LOG_MAX_SIZE é lido pelo check_log_size do cls_common.sh: não renomear.
 GI_LOG_MAX_SIZE=$((10 * 1024 * 1024))
 
 # subdiretórios de data/
@@ -209,12 +222,12 @@ UNT_MONITOR_TIMEOUT_SECS="${UNT_MONITOR_TIMEOUT_SECS:-120}"
 
 # < trava do ambiente de teste >-------------------------------------------------------
 
-# met_check_test_env, met_log e check_log_size (met_common.sh: symlink para
-# 04.dvl/bash, compartilhado com 21.mrad, 21.mvol e 27.nowcast)
-source "${UNT_LIB_DIR}/met_common.sh"
+# cls_check_test_env, cls_log e check_log_size (cls_common.sh: de CLS_LIB
+# ou do symlink ao lado; comum aos projetos cls)
+source "${CLS_LIB:-${UNT_LIB_DIR}}/cls_common.sh"
 
-# com MET_ENV=test, nenhum destes caminhos pode apontar para fora de
-# MET_TST_ROOT -- um env.sh incompleto gravaria nos dados de produção. Roda
+# com CLS_ENV=test, nenhum destes caminhos pode apontar para fora de
+# CLS_TST_ROOT -- um env.sh incompleto gravaria nos dados de produção. Roda
 # já no source, antes de qualquer mkdir/log/lock de quem importou.
 # o destino remoto dos modelos ("host:/...") é barrado no unt_treino.sh; o
 # local entra na trava como os demais caminhos
@@ -223,7 +236,7 @@ if [[ "${UNT_DESTINO_MODELOS}" != *:* ]]; then
     CS_DESTINO_LOCAL="${UNT_DESTINO_MODELOS}"
 fi
 
-met_check_test_env "${UNT_PATH}" "${UNT_CATALOG_DB}" "${UNT_CAPPI_DIR}" \
+cls_check_test_env "${UNT_PATH}" "${UNT_CATALOG_DB}" "${UNT_CAPPI_DIR}" \
                    "${UNT_MAPA_CACHE}" "${UNT_MODELOS_DIR}" "${UNT_JANELAS_DIR}" \
                    "${UNT_AVALIACAO_DIR}" "${CS_DESTINO_LOCAL}" || exit 1
 

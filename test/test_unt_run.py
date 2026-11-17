@@ -205,7 +205,7 @@ def test_cron_le_unt_env_sob_ambiente_minimo(tmp_path):
     lpth_code.mkdir()
     for lpth in CS_ROOT.glob("unt_*.sh"):
         shutil.copy(lpth, lpth_code)
-    shutil.copy(CS_ROOT / "met_common.sh", lpth_code)  # segue o symlink
+    shutil.copy(CS_ROOT / "cls_common.sh", lpth_code)  # segue o symlink
 
     lpth_db = _catalog(tmp_path / "catalog.db", [("CGU", 250, 1000)])
     (lpth_code / "unt_env.sh").write_text(f"UNT_PATH={tmp_path / 'ofl'}\n"

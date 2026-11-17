@@ -45,7 +45,7 @@
 #                   sem uso desde a remoção do unt_daemon.sh
 #
 # 2026.out  mlabru  check_log_size e o corpo do log() vêm do met_common.sh
-#                   (comum aos projetos met); o horário do log() passa a ser
+#                   (comum aos projetos cls); o horário do log() passa a ser
 #                   UTC, como os logs Python
 #
 # 2026.out  mlabru  apps/*.py chamados de UNT_LIB_DIR (código) em vez de
@@ -71,7 +71,7 @@
 # diretório deste arquivo (o UNT_LIB_DIR só existe depois do source abaixo)
 CS_DIRETORIO_COMMON="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# configuração (também traz met_log/check_log_size do met_common.sh)
+# configuração (também traz cls_log/check_log_size do cls_common.sh)
 # shellcheck source=unt_cfg.sh
 source "${CS_DIRETORIO_COMMON}/unt_cfg.sh"
 
@@ -79,13 +79,13 @@ source "${CS_DIRETORIO_COMMON}/unt_cfg.sh"
 
 # -------------------------------------------------------------------------------------
 # grava uma mensagem em UNT_LOG_APP (e na tela), com data/hora UTC; rotaciona
-# os logs grandes demais (met_log, do met_common.sh)
+# os logs grandes demais (cls_log, do cls_common.sh)
 #
 # uso: log "[info]: mensagem"   (níveis usados: [info], [warn], [error])
 #
 log()
 {
-    met_log "${UNT_LOG_APP}" "${UNT_LOG_ERR}" "$@"
+    cls_log "${UNT_LOG_APP}" "${UNT_LOG_ERR}" "$@"
 
 } # log
 

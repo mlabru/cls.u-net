@@ -311,8 +311,8 @@ distribui_modelos()
         return 0
     fi
 
-    if [[ "${UNT_DESTINO_MODELOS}" == *:* ]] && [ "${MET_ENV:-}" = test ]; then
-        log "[error]: MET_ENV=test: destino remoto ${UNT_DESTINO_MODELOS} recusado."
+    if [[ "${UNT_DESTINO_MODELOS}" == *:* ]] && [ "${CLS_ENV:-}" = test ]; then
+        log "[error]: CLS_ENV=test: destino remoto ${UNT_DESTINO_MODELOS} recusado."
         return 1
     fi
 

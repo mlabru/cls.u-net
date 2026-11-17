@@ -7,7 +7,7 @@ test_unt_treino
 testes de unt_treino.sh (ciclo completo no catálogo sintético: manifesto ->
 untTrain -> untEval -> untPromove -> rsync; retomada do ciclo; descarte de
 retomadas abandonadas; rsync sem retomadas/temporários e com os links;
-destino remoto barrado em MET_ENV=test; aviso dos alertas por par do
+destino remoto barrado em CLS_ENV=test; aviso dos alertas por par do
 untPromove), do unt_cron.sh treino e do executa_monitor do unt_run.sh
 
 2026.out  mlabru  avisa_alertas_por_par
@@ -179,7 +179,7 @@ def test_distribui_sem_retomadas_e_com_links(tmp_path):
 
 
 def test_destino_remoto_barrado_no_ambiente_de_teste(tmp_path):
-    ldct_env = _ambiente(tmp_path, MET_ENV="test", MET_TST_ROOT=str(tmp_path),
+    ldct_env = _ambiente(tmp_path, CLS_ENV="test", CLS_TST_ROOT=str(tmp_path),
                          UNT_CATALOG_DB=str(tmp_path / "c.db"),
                          UNT_CAPPI_DIR=str(tmp_path / "cappi"),
                          UNT_DESTINO_MODELOS="ops:/srv/modelos")
@@ -191,7 +191,7 @@ def test_destino_remoto_barrado_no_ambiente_de_teste(tmp_path):
 
 
 def test_destino_local_fora_da_raiz_barrado_pela_trava(tmp_path):
-    ldct_env = _ambiente(tmp_path, MET_ENV="test", MET_TST_ROOT=str(tmp_path / "raiz"),
+    ldct_env = _ambiente(tmp_path, CLS_ENV="test", CLS_TST_ROOT=str(tmp_path / "raiz"),
                          UNT_PATH=str(tmp_path / "raiz/untw"),
                          UNT_CATALOG_DB=str(tmp_path / "raiz/c.db"),
                          UNT_CAPPI_DIR=str(tmp_path / "raiz/cappi"),
