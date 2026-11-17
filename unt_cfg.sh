@@ -15,6 +15,13 @@
 # 25.oflow, que o ambiente de teste (21.mvol/04.dvl/tst_env/tst_setup.sh)
 # exporta; o tst_env ainda não tem o passo do 25.u-net. Não renomear.
 #
+# 2026.nov  mlabru  CLS_LIB obrigatória (passo 2): sai o symlink cls_common.sh
+#                   da raiz do repo; sem cls.env/CLS_LIB, erro explícito
+#
+# 2026.nov  mlabru  - banco/CAPPIs compartilhados: sem sobreposição própria,
+#                     vêm de CLS_DBASE_FILE/CLS_CAPPI_DIR (cls.env, sob
+#                     CLS_ROOT) antes do padrão antigo
+#
 # 2026.nov  mlabru  - cls.env (CLS_ENV_FILE, padrão ~/.config/cls/cls.env)
 #                     carregado antes dos padrões; cls_common.sh vem de
 #                     CLS_LIB, com o symlink ao lado do script como reserva
@@ -113,10 +120,11 @@ export UNT_MAPA_CACHE="${UNT_MAPA_CACHE:-${UNT_BASE}/cache/mapa}"
 # < entrada: catálogo e CAPPIs do 27.nowcast >-----------------------------------------
 
 # [env] catálogo SQLite (só lido, nunca gravado)
-UNT_CATALOG_DB="${UNT_CATALOG_DB:-${UNT_BASE}/dbase/catalog.db}"
+# (ordem: UNT_* > CLS_DBASE_FILE/CLS_CAPPI_DIR do cls.env > padrão)
+UNT_CATALOG_DB="${UNT_CATALOG_DB:-${CLS_DBASE_FILE:-${UNT_BASE}/dbase/catalog.db}}"
 
 # [env] raiz dos CAPPIs (.npy)
-UNT_CAPPI_DIR="${UNT_CAPPI_DIR:-${UNT_BASE}/cappi}"
+UNT_CAPPI_DIR="${UNT_CAPPI_DIR:-${CLS_CAPPI_DIR:-${UNT_BASE}/cappi}}"
 
 # [env] espera máxima (ms) por um lock do catálogo nas consultas sqlite3:
 # o 27.nowcast grava no catálogo enquanto lemos, e sem isso o sqlite3 falha na
@@ -222,9 +230,15 @@ UNT_MONITOR_TIMEOUT_SECS="${UNT_MONITOR_TIMEOUT_SECS:-120}"
 
 # < trava do ambiente de teste >-------------------------------------------------------
 
-# cls_check_test_env, cls_log e check_log_size (cls_common.sh: de CLS_LIB
-# ou do symlink ao lado; comum aos projetos cls)
-source "${CLS_LIB:-${UNT_LIB_DIR}}/cls_common.sh"
+# cls_check_test_env, cls_log e check_log_size (cls_common.sh: de CLS_LIB,
+# do cls.env; comum aos projetos cls)
+# CLS_LIB (cls.env) é obrigatória: sem ela não há cls_common.sh -- falha
+# aqui, com a causa, em vez de num "command not found" mais adiante
+if [ ! -r "${CLS_LIB:-}/cls_common.sh" ]; then
+    echo "[error]: CLS_LIB='${CLS_LIB:-}' sem cls_common.sh; defina-a no cls.env (${CLS_ENV_FILE:-~/.config/cls/cls.env})" >&2
+    exit 1
+fi
+source "${CLS_LIB}/cls_common.sh"
 
 # com CLS_ENV=test, nenhum destes caminhos pode apontar para fora de
 # CLS_TST_ROOT -- um env.sh incompleto gravaria nos dados de produção. Roda

@@ -46,3 +46,8 @@ unt_env.sh
 data/avaliacao/
 data/janelas/
 data/modelos/
+
+# links locais para os dados da raiz da instalação (CLS_ROOT); os scripts
+# não dependem deles (banco/CAPPIs vêm do cls.env)
+data/dbase
+data/cappi
