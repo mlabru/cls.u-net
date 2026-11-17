@@ -27,6 +27,8 @@ metade.
 
 $ python untMakGIF.py -i ./saida -s ./out -f nowcast.gif
 
+2026.nov  mlabru  imports cls_common.* (pacote do repo cls.common, via
+                  CLS_PYLIB; antes symlinks de diretório)
 2026.out  mlabru  portado de 25.oflow (oflMakGIF); backends pytorch, rainnet
                   e smaat.
 
@@ -63,8 +65,8 @@ import typing
 # PIL
 from PIL import Image, ImageDraw, ImageFont
 
-# utils (módulo compartilhado com outros projetos cls: apps/util é symlink)
-import util.utl_gifs as utg
+# utils (pacote comum cls_common, repo cls.common, via CLS_PYLIB)
+import cls_common.util.utl_gifs as utg
 
 # < constants >--------------------------------------------------------------------------
 

@@ -60,7 +60,7 @@ executa_app()
     local ls_script="$1"
     shift
 
-    PYTHONPATH="${UNT_LIB_DIR}/apps" python3 "${UNT_LIB_DIR}/apps/${ls_script}" "$@" \
+    PYTHONPATH="${UNT_LIB_DIR}/apps${PYTHONPATH:+:${PYTHONPATH}}" python3 "${UNT_LIB_DIR}/apps/${ls_script}" "$@" \
         >> "${UNT_LOG_APP}" 2>> "${UNT_LOG_ERR}"
 
 } # executa_app
@@ -153,7 +153,7 @@ treina_backend()
     read -r -a larr_extras <<< "${UNT_TREINO_ARGS}"
 
     local li_codigo_saida=0
-    PYTHONPATH="${UNT_LIB_DIR}/apps" "${larr_timeout[@]}" \
+    PYTHONPATH="${UNT_LIB_DIR}/apps${PYTHONPATH:+:${PYTHONPATH}}" "${larr_timeout[@]}" \
         python3 "${UNT_LIB_DIR}/apps/untTrain.py" -b "${ls_backend}" \
         --janelas "${ls_manifesto}" --cappi-dir "${UNT_CAPPI_DIR}" \
         --modelos-dir "${UNT_MODELOS_DIR}" --config "${UNT_CONFIG}" \

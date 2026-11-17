@@ -15,6 +15,9 @@
 # 25.oflow, que o ambiente de teste (21.mvol/04.dvl/tst_env/tst_setup.sh)
 # exporta; o tst_env ainda não tem o passo do 25.u-net. Não renomear.
 #
+# 2026.nov  mlabru  cls_setup_pythonpath: pacote Python comum (cls_common)
+#                   por CLS_PYLIB, no lugar dos symlinks apps/{dbase,radar,util}
+#
 # 2026.nov  mlabru  CLS_LIB obrigatória (passo 2): sai o symlink cls_common.sh
 #                   da raiz do repo; sem cls.env/CLS_LIB, erro explícito
 #
@@ -253,5 +256,11 @@ fi
 cls_check_test_env "${UNT_PATH}" "${UNT_CATALOG_DB}" "${UNT_CAPPI_DIR}" \
                    "${UNT_MAPA_CACHE}" "${UNT_MODELOS_DIR}" "${UNT_JANELAS_DIR}" \
                    "${UNT_AVALIACAO_DIR}" "${CS_DESTINO_LOCAL}" || exit 1
+
+# < pacote Python comum >--------------------------------------------------------------
+
+# cls_common (dbase, radar, util; CLS_PYLIB no cls.env) no PYTHONPATH,
+# exportado para todo programa Python chamado daqui (cls_common.sh)
+cls_setup_pythonpath || exit 1
 
 # < the end >--------------------------------------------------------------------------

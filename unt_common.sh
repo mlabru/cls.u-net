@@ -370,7 +370,7 @@ executa_nowcast()
     fi
 
     local li_codigo_saida=0
-    PYTHONPATH="${UNT_LIB_DIR}/apps" timeout "${UNT_TIMEOUT_SECS}" \
+    PYTHONPATH="${UNT_LIB_DIR}/apps${PYTHONPATH:+:${PYTHONPATH}}" timeout "${UNT_TIMEOUT_SECS}" \
         python3 "${UNT_LIB_DIR}/apps/untMain.py" \
         -r "${ls_radar}" -a "${li_alcance}" \
         --catalog "${UNT_CATALOG_DB}" --cappi-dir "${UNT_CAPPI_DIR}" \
@@ -401,7 +401,7 @@ executa_monitor()
     muda_para_diretorio "${UNT_PATH}"
 
     local li_codigo_saida=0
-    PYTHONPATH="${UNT_LIB_DIR}/apps" timeout "${UNT_MONITOR_TIMEOUT_SECS}" \
+    PYTHONPATH="${UNT_LIB_DIR}/apps${PYTHONPATH:+:${PYTHONPATH}}" timeout "${UNT_MONITOR_TIMEOUT_SECS}" \
         python3 "${UNT_LIB_DIR}/apps/untMonitor.py" -i "${UNT_OUT}" --config "${UNT_CONFIG}" \
         >> "${UNT_LOG_APP}" 2>> "${UNT_LOG_ERR}" || li_codigo_saida=$?
 
@@ -506,7 +506,7 @@ executa_untmakgif()
 
     muda_para_diretorio "${UNT_PATH}"
 
-    PYTHONPATH="${UNT_LIB_DIR}/apps" timeout "${UNT_TIMEOUT_SECS}" \
+    PYTHONPATH="${UNT_LIB_DIR}/apps${PYTHONPATH:+:${PYTHONPATH}}" timeout "${UNT_TIMEOUT_SECS}" \
         python3 "${UNT_LIB_DIR}/apps/untMakGIF.py" \
         -i "${UNT_TEMP}/${ls_prefixo}" -s "${UNT_OUT}" -f "${ls_prefixo}_now.gif" \
         --idade-minima 0 \
