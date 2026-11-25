@@ -36,9 +36,6 @@ data/dbase/
 data/output/
 data/state/
 
-# ambiente local do cron (ver unt_env.sh.example)
-unt_env.sh
-
 # modelos treinados, manifestos de janelas e avaliações (gerados; grandes)
 *.pt
 *.pth

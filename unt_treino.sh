@@ -5,7 +5,9 @@
 #
 # unt_treino.sh
 # um ciclo de treino, no host de GPU e FORA do cron de 5 min do nowcast
-# (ex.: semanal, via "unt_cron.sh treino"):
+# (ex.: semanal, chamado direto pelo cron do host de GPU, com a configuração
+# desta máquina -- UNT_TREINO_*, UNT_DESTINO_MODELOS, ... -- no cls.env:
+#   0 3 * * 0   bash <UNT_ROOT>/unt_treino.sh):
 #
 #   1. manifesto de janelas de todos os pares do catálogo (untJanelas.py);
 #   2. untTrain.py de cada backend de UNT_TREINO_BACKENDS -> candidatos
@@ -31,6 +33,7 @@
 # códigos de saída: 0 = ciclo concluído (com ou sem promoção); 1 = falha
 # (catálogo, manifesto, nenhum backend treinado, avaliação ou rsync).
 #
+# 2026.nov  mlabru  alvo direto do cron (saiu o "unt_cron.sh treino")
 # 2026.out  mlabru  "main; exit" na mesma linha (edição do script durante o ciclo).
 # 2026.out  mlabru  [warn] dos alertas por par radar/alcance do untPromove.py
 # 2026.out  mlabru  initial version (Linux/Bash)

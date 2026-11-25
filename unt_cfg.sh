@@ -7,13 +7,16 @@
 # pipefail": quem faz o source já escolheu as próprias opções de shell.
 #
 # variáveis marcadas [env] podem ser trocadas por variável de ambiente
-# (export antes de rodar, ou no unt_env.sh lido pelo unt_cron.sh). As
+# (export antes de rodar, ou no cls.env da instalação, seção 25.u-net). As
 # demais são fixas.
 #
 # ATENÇÃO: os nomes UNT_PATH, UNT_CATALOG_DB, UNT_CAPPI_DIR,
 # UNT_AGE_MAX_SECS, UNT_TIMEOUT_SECS e UNT_VERIFY espelham os OFL_* do
 # 25.oflow, que o ambiente de teste (cls.test/tst_setup.sh)
 # exporta; o cls.test ainda não tem o passo do 25.u-net. Não renomear.
+#
+# 2026.nov  mlabru  sobreposições locais só pelo cls.env (saíram o unt_cron.sh
+#                   e o unt_env.sh)
 #
 # 2026.nov  mlabru  cls_setup_pythonpath: pacote Python comum (cls_common)
 #                   por CLS_PYLIB, no lugar dos symlinks apps/{dbase,radar,util}

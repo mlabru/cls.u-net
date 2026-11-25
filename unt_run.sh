@@ -6,7 +6,13 @@
 # unt_run.sh
 # uma passada do nowcast: para cada par radar/alcance do catálogo, gera o
 # nowcast dos backends de Deep Learning e os GIFs se houver sequência nova (ver processa_par em
-# unt_common.sh), e termina. A repetição fica por conta do cron (unt_cron.sh).
+# unt_common.sh), e termina. A repetição fica por conta do cron, que o chama
+# direto (como o vol_sync.sh do 21.mvol e o ofl_run.sh do 25.oflow):
+#   */5 * * * * bash <UNT_ROOT>/unt_run.sh
+# o ambiente mínimo do cron basta: USER/HOME têm reserva no unt_cfg.sh, o
+# PATH padrão (/usr/bin:/bin) acha sqlite3/flock/timeout, o python3 vem do
+# virtualenv (ativa_virtualenv) e as configurações desta máquina (UNT_*,
+# CLS_*) vêm do cls.env.
 #
 # só uma execução por vez: se a anterior ainda estiver rodando (lock de
 # instância UNT_INSTANCE_LOCK), esta sai em silêncio com código 0.
@@ -17,6 +23,8 @@
 # ATENÇÃO: espelho do ofl_run.sh, que o ambiente de teste (21.mvol/04.dvl/
 # cls.test/tst_cycle.sh) chama por nome e sem argumentos. Não renomear.
 #
+# 2026.nov  mlabru  alvo direto do cron: saem o unt_cron.sh e o unt_env.sh
+#                   (configuração local no cls.env, seção 25.u-net)
 # 2026.out  mlabru  "main; exit" na mesma linha (edição do script durante a varredura).
 # 2026.out  mlabru  monitor de skill (executa_monitor) ao fim da varredura.
 #

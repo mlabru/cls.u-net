@@ -8,8 +8,10 @@ testes de unt_treino.sh (ciclo completo no catálogo sintético: manifesto ->
 untTrain -> untEval -> untPromove -> rsync; retomada do ciclo; descarte de
 retomadas abandonadas; rsync sem retomadas/temporários e com os links;
 destino remoto barrado em CLS_ENV=test; aviso dos alertas por par do
-untPromove), do unt_cron.sh treino e do executa_monitor do unt_run.sh
+untPromove) e do executa_monitor do unt_run.sh
 
+2026.nov  mlabru  sem o teste do unt_cron.sh (removido: o cron chama o
+                  unt_treino.sh direto)
 2026.out  mlabru  avisa_alertas_por_par
 2026.out  mlabru  initial version (Linux/Python)
 """
@@ -231,15 +233,7 @@ def test_avisa_alertas_por_par_so_da_decisao_nova(tmp_path):
     lproc = _bash(_sem_main("[ 0 -eq $(linhas_do_registro rainnet) ]"), ldct_env)
     assert 0 == lproc.returncode, lproc.stderr
 
-# < unt_cron.sh e monitor >--------------------------------------------------------------
-
-def test_cron_tarefa_invalida(tmp_path):
-    lproc = subprocess.run(["bash", str(CS_ROOT / "unt_cron.sh"), "xx"],
-                           env=_ambiente(tmp_path), capture_output=True, text=True)
-
-    assert 2 == lproc.returncode
-    assert "uso: unt_cron.sh [run|treino]" in lproc.stderr
-
+# < monitor >--------------------------------------------------------------------------
 
 def test_executa_monitor_sem_historico_e_desligado(tmp_path):
     ldct_env = _ambiente(tmp_path, UNT_VERIFY="true")

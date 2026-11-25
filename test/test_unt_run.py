@@ -4,9 +4,12 @@ Centro Logístico de Simulação Meteorológica
 Copyright (c) 1995-2026, Instituto de Controle do Espaço Aéreo
 
 test_unt_run
-testes de unt_run.sh/unt_cron.sh: catálogo inacessível é erro (rc 1, nunca
-criado nem silenciado), catálogo sem pares gera aviso, e o unt_cron.sh lê o
-ambiente local (unt_env.sh) mesmo sob o ambiente mínimo do cron
+testes de unt_run.sh: catálogo inacessível é erro (rc 1, nunca criado nem
+silenciado), catálogo sem pares gera aviso, e o cron pode chamá-lo direto:
+sob o ambiente mínimo do cron a configuração vem do cls.env
+
+2026.nov  mlabru  sem unt_cron.sh/unt_env.sh: o cron chama o unt_run.sh
+                  direto, configuração pelo cls.env
 
 2026.out  mlabru  portado de 25.oflow; nomes dos backends trocados (pytorch, rainnet, smaat).
 
@@ -19,6 +22,7 @@ ambiente local (unt_env.sh) mesmo sob o ambiente mínimo do cron
 # < imports >----------------------------------------------------------------------------
 
 # python library
+import getpass
 import os
 import pathlib
 import shutil
@@ -199,24 +203,28 @@ def test_sem_virtualenv_avisa_e_segue(tmp_path):
     assert "[warn]: virtualenv inexistente" in ls_log
 
 # -------------------------------------------------------------------------------------
-def test_cron_le_unt_env_sob_ambiente_minimo(tmp_path):
-    # cópia dos scripts para poder criar um unt_env.sh sem tocar no repo
-    lpth_code = tmp_path / "code"
-    lpth_code.mkdir()
-    for lpth in CS_ROOT.glob("unt_*.sh"):
-        shutil.copy(lpth, lpth_code)
-
+def test_cron_chama_o_unt_run_direto_sob_ambiente_minimo(tmp_path):
+    # o crontab chama o unt_run.sh direto; a configuração desta máquina vem
+    # só do cls.env (seção 25.u-net), como em produção
     lpth_db = _catalog(tmp_path / "catalog.db", [("CGU", 250, 1000)])
-    (lpth_code / "unt_env.sh").write_text(f"UNT_PATH={tmp_path / 'ofl'}\n"
-                                          f"UNT_CATALOG_DB={lpth_db}\n"
-                                          f"UNT_CAPPI_DIR={tmp_path / 'cappi'}\n"
-                                          f"UNT_VENV={tmp_path / 'sem_venv'}\n")
 
-    # env vazio, como o cron (sem USER/HOME/UNT_*)
-    lproc = subprocess.run(["/bin/bash", str(lpth_code / "unt_cron.sh")],
-                           env={}, capture_output=True, text=True)
+    lpth_cls_env = tmp_path / "home/.config/cls/cls.env"
+    lpth_cls_env.parent.mkdir(parents=True)
+    lpth_cls_env.write_text(f'CLS_LIB="{os.environ["CLS_LIB"]}"\n'
+                            f'CLS_PYLIB="{os.environ["CLS_PYLIB"]}"\n'
+                            f'UNT_PATH="${{UNT_PATH:-{tmp_path / "ofl"}}}"\n'
+                            f'CLS_DBASE_FILE="{lpth_db}"\n'
+                            f'CLS_CAPPI_DIR="{tmp_path / "cappi"}"\n'
+                            f'UNT_VENV="{tmp_path / "sem_venv"}"\n')
 
-    assert 0 == lproc.returncode, lproc.stderr
+    # ambiente do cron (Debian): HOME/LOGNAME/SHELL e PATH=/usr/bin:/bin, sem
+    # USER e sem CLS_*/UNT_* exportadas
+    ldct_env = {"HOME": str(tmp_path / "home"), "LOGNAME": getpass.getuser(),
+                "SHELL": "/bin/sh", "PATH": "/usr/bin:/bin"}
+    lproc = subprocess.run(["/bin/bash", str(CS_ROOT / "unt_run.sh")],
+                           env=ldct_env, capture_output=True, text=True)
+
+    assert 0 == lproc.returncode, lproc.stdout + lproc.stderr
     ls_log = (tmp_path / "ofl/logs/unt_main.log").read_text()
     assert f"catálogo={lpth_db}" in ls_log
     assert "varredura concluída (1 pares)" in ls_log
